@@ -1,0 +1,4 @@
+TODO
+    editace profilu
+    pøidat èlanek (do menu nahoøe) pokud je autor
+    pøehled èlánku + filtry (moje èlánky, ke schválení, k hodnocení, mé hodnocení) 

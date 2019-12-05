@@ -45,8 +45,18 @@ class DatabaseModel {
     }
 
     public function insertNewUser(string $jmeno, string $heslo, string $email, string $login){
-        $sql = "INSERT INTO ".TABLE_UZIVATELE." (jmeno, heslo, login, email) VALUES ('$jmeno', '$heslo', '$login', '$email')";
-        return $this->pdo->exec($sql);
+
+        if( empty($this->getIduzivateleByLogin($login)) ){
+            $sql = "INSERT INTO " . TABLE_UZIVATELE . " (jmeno, heslo, login, email) VALUES ('$jmeno', '$heslo', '$login', '$email')";
+            if($this->pdo->exec($sql) === false){
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            return false;
+        }
+
     }
 
     public function getHesloByLogin(string $login){
@@ -86,6 +96,8 @@ class DatabaseModel {
             $sql.= " WHERE ".TABLE_UZIVATELE.".iduzivatele = '$iduzivatele'";
         }
 
+        $sql.= " ORDER BY ".TABLE_UZIVATELE.".iduzivatele";
+
         //echo $sql;
         $uzivatele = $this->pdo->query($sql)->fetchAll();
 
@@ -110,7 +122,11 @@ class DatabaseModel {
         $jak = true;
 
         $sql = "DELETE FROM ".TABLE_UZIVPRAVA." WHERE idprava='$idprava' and iduzivatele='$iduzivatele'";
-        $this->pdo->exec($sql);
+        if($this->pdo->exec($sql) === false){
+            $jak = false;
+        }else{
+            $jak = true;
+        }
 
         if($hodnota == 1){
             $sqlInsert= "INSERT INTO ".TABLE_UZIVPRAVA." (idprava, iduzivatele) VALUES ('$idprava', '$iduzivatele') 
@@ -118,10 +134,45 @@ class DatabaseModel {
                                 idprava = '$idprava',
                                 iduzivatele = '$iduzivatele'";
             //echo "<br>$sql<br>";
-            $jak &= $this->pdo->exec($sqlInsert);
+            if($this->pdo->exec($sqlInsert) === false){
+                $jak &= false;
+            }else{
+                $jak &= true;
+            }
         }
 
         return $jak;
+    }
+
+    public function getIduzivateleByLogin(string $login){
+        $sql = "SELECT iduzivatele FROM ".TABLE_UZIVATELE." WHERE login = '$login'";
+        return $this->pdo->query($sql)->fetchAll()[0];
+    }
+
+    public function updateInfoUzivatele(int $iduzivatele, string $jmeno, string $email, string $login)
+    {
+        $sql = "UPDATE ".TABLE_UZIVATELE." 
+                SET jmeno = '$jmeno', 
+                    email = '$email',
+                    login = '$login'
+                WHERE iduzivatele = '$iduzivatele'";
+
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public function updateHeslo(int $iduzivatele, string $heslo_nove){
+        $sql = "UPDATE ".TABLE_UZIVATELE." 
+                SET heslo = '$heslo_nove'
+                WHERE iduzivatele = '$iduzivatele'";
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
     }
     
 }

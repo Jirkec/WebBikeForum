@@ -22,9 +22,9 @@ $tplHeaders = new TemplateBasics();
 // hlavicka
 $tplHeaders->getHTMLHeader();
 
-if(aktualni_prava(array(1), $this->db, $this->login)){
+if($this->login->isUserLoged() && aktualni_prava(array(1), $this->db, $this->login)){
 ?>
-    <div class="table-responsive">
+    <div class="table-responsive element_on_page">
     <?php
 
     if(array_key_exists('uzivatele', $tplData) && count($tplData['uzivatele'])>0 ) {

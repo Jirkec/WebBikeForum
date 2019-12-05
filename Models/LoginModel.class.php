@@ -29,12 +29,6 @@ class LoginModel{
     public function getUserLogin(){
         return $this->ses->readSession($this->dName);
     }
-
-    public function getUserInfo(){
-        $name = $this->ses->readSession($this->dName);
-        $date = $this->ses->readSession($this->dDate);
-        return "Jméno: $name<br>Datum: $date<br>";
-    }
     
 }
 ?>

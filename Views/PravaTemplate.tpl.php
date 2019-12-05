@@ -22,12 +22,12 @@ $tplHeaders = new TemplateBasics();
 // hlavicka
 $tplHeaders->getHTMLHeader();
 
-if(aktualni_prava(array(1), $this->db, $this->login)){
+if($this->login->isUserLoged() && aktualni_prava(array(1), $this->db, $this->login)){
 
     if(array_key_exists('prava', $tplData) && count($tplData['prava'])>0 ) {
 
         ?>
-        <div class="table-responsive">
+        <div class="table-responsive element_on_page">
                             <table class="table table-sm table-striped ">
                                 <thead class="table-dark">
                                     <tr>

@@ -159,4 +159,16 @@ function odhlasit_uzivatele() {
     });
 }
 
+function odeslat_edit_profilu() {
+    var posting = jQuery.post("<?php echo DIRECTORY_AJAX; ?>/edit_profilu_w.php", jQuery("#form_editace_profilu").serialize());
+    posting.done(function(data)
+    {
+        if(data == 1){
+            location.reload();
+        }else{
+            alert("Změna se nepovedla");
+        }
+    });
+}
+
 </script>

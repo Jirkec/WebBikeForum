@@ -53,9 +53,9 @@ const WEB_PAGES = array(
         "title" => "Uživatelé"),
 
     // editace profilu uzivatele
-    "autori" => array("file_name" => "AutoriController.class.php",
+   /* "autori" => array("file_name" => "AutoriController.class.php",
                       "class_name" => "AutoriController",
-        "title" => "Autoři"),
+        "title" => "Autoři"),*/
 
     "prava" => array("file_name" => "PravaController.class.php",
             "class_name" => "PravaController",

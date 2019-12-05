@@ -32,10 +32,8 @@ class TemplateBasics {
 
                 <link rel="stylesheet" href="style/composer/vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
                 <link rel="stylesheet" href="style/composer/vendor/components/font-awesome/css/font-awesome.min.css">
-
-                <link rel="stylesheet" href="style/style.css">
-
                 <link rel="stylesheet" href="jquery-ui-1.12.1/jquery-ui.min.css">
+                <link rel="stylesheet" href="style/style.css">
 
                 <script src="jquery-3.4.1.min.js"></script>
                 <script src="style/composer/vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -66,28 +64,21 @@ class TemplateBasics {
 
                     <div class="collapse navbar-collapse " id="collapsibleNavbar">
                             <ul class="navbar-nav">
-                                <li class="nav-item">
+                                <!--<li class="nav-item">
                                     <a class="nav-link" href="index.php?page=autori">Autoři</a>
-                                </li>
+                                </li>-->
                                 <?php
                                     if($login->isUserLoged() && aktualni_prava(array(1),$db,$login)) {
                                         ?>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="index.php?page=prava">Práva</a>
+                                            <a class="nav-link" href="index.php?page=prava"><?php echo WEB_PAGES["prava"]["title"]; ?></a>
                                         </li>
-                                     <?php
-                                    }
-                                    ?>
-
-                                <?php
-                                if($login->isUserLoged() && aktualni_prava(array(1),$db,$login)) {
-                                    ?>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="index.php?page=uzivatele">Uživatelé</a>
+                                        <a class="nav-link" href="index.php?page=uzivatele"><?php echo WEB_PAGES["uzivatele"]["title"]; ?></a>
                                     </li>
                                     <?php
-                                }
-                                ?>
+                                        }
+                                    ?>
                             </ul>
                         </div>
 

@@ -5,7 +5,7 @@ require_once(DIRECTORY_CONTROLLERS."/IController.interface.php");
 /**
  * Ovladac zajistujici vypsani uvodni stranky.
  */
-class PravaController implements IController {
+class ProfilController implements IController {
 
     /** @var DatabaseModel $db  Sprava databaze. */
     private $db;
@@ -31,12 +31,13 @@ class PravaController implements IController {
         global $tplData;
         $tplData = [];
 
-        if($this->login->isUserLoged()) {
-            $tplData['prava'] = $this->db->getPrava();
-        }
 
+        if($this->login->isUserLoged()) {
+            $iduzivatele = $this->db->getIduzivateleByLogin($this->login->getUserLogin());
+            $tplData['profil'] = $this->db->getUzivateleInfo(intval($iduzivatele));
+        }
         ob_start();
-        require(DIRECTORY_VIEWS ."/PravaTemplate.tpl.php");
+        require(DIRECTORY_VIEWS ."/ProfilTemplate.tpl.php");
         $obsah = ob_get_clean();
 
         // vratim sablonu naplnenou daty

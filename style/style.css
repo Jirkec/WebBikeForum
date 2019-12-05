@@ -11,18 +11,23 @@ a:hover {
 
 /* tablet */
 @media screen and (min-width: 768px) {
-    .table-responsive{
+    .element_on_page{
         max-width: 100%;
         margin: auto;
         text-align: left;
     }
+
+
 }
 
 /* pc */
 @media screen and (min-width: 992px) {
-    .table-responsive{
+    .element_on_page{
         max-width: 60%;
         margin: auto;
         text-align: left;
     }
 }
+
+
+
