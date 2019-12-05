@@ -1,0 +1,28 @@
+a:hover {
+    cursor:pointer;
+}
+
+#div_vnitrek{
+    padding: 30px 30px 40px 30px;
+    width: 100vw;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* tablet */
+@media screen and (min-width: 768px) {
+    .table-responsive{
+        max-width: 100%;
+        margin: auto;
+        text-align: left;
+    }
+}
+
+/* pc */
+@media screen and (min-width: 992px) {
+    .table-responsive{
+        max-width: 60%;
+        margin: auto;
+        text-align: left;
+    }
+}
