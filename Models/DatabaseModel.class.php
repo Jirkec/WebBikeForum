@@ -110,7 +110,7 @@ class DatabaseModel {
         $jak = true;
 
         $sql = "DELETE FROM ".TABLE_UZIVPRAVA." WHERE idprava='$idprava' and iduzivatele='$iduzivatele'";
-        $jak &= $this->pdo->exec($sql);
+        $this->pdo->exec($sql);
 
         if($hodnota == 1){
             $sqlInsert= "INSERT INTO ".TABLE_UZIVPRAVA." (idprava, iduzivatele) VALUES ('$idprava', '$iduzivatele') 
