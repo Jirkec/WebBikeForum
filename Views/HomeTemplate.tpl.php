@@ -44,7 +44,7 @@ if(array_key_exists('clanky', $tplData) && count($tplData['clanky'])>0 ) {
         $res .= "<div style='text-align:justify;'><b>Úryvek:</b> $d[text]</div><hr>";*/
     }
 } else {
-    $res .= "Nenalezeny žádné články";
+    $res .= "<div class=\"alert alert-warning\" role=\"alert\">Nenalezeny žádné články</div>";
 }
 echo $res;
 

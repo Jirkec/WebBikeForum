@@ -50,11 +50,11 @@ if($this->login->isUserLoged()){
             </form>
         <?php }
     } else {
-        echo "Nenalezeny žádné informace o  uživateli";
+        echo "<div class=\"alert alert-warning\" role=\"alert\">Nenalezeny žádné informace o  uživateli</div>";
     }
 
 }else{
-   echo "<span class='error'>Není přihlášen žádný uživatel</span>";
+    echo "<div class=\"alert alert-danger\" role=\"alert\">Není přihlášen žádný uživatel</div>";
 }
 
 

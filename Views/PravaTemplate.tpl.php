@@ -58,10 +58,10 @@ if($this->login->isUserLoged() && aktualni_prava(array(1), $this->db, $this->log
             </table>
         <?php
     } else {
-        echo "Nenalezeny žádná práva";
+        echo "<div class=\"alert alert-warning\" role=\"alert\">Nenalezeny žádná práva</div>";
     }
 }else{
-   echo "<span class='error'>Nemáte dostatečná práva na zobrazení této stránky!</span>";
+    echo "<div class=\"alert alert-danger\" role=\"alert\">Nemáte dostatečná práva na zobrazení této stránky!</div>";
 }
 
 
