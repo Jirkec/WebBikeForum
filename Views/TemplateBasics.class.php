@@ -68,17 +68,25 @@ class TemplateBasics {
                                     <a class="nav-link" href="index.php?page=autori">Autoři</a>
                                 </li>-->
                                 <?php
-                                    if($login->isUserLoged() && aktualni_prava(array(1),$db,$login)) {
-                                        ?>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="index.php?page=prava"><?php echo WEB_PAGES["prava"]["title"]; ?></a>
-                                        </li>
+                                if($login->isUserLoged() && aktualni_prava(array(1),$db,$login)) {
+                                    ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php?page=prava"><?php echo WEB_PAGES["prava"]["title"]; ?></a>
+                                    </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="index.php?page=uzivatele"><?php echo WEB_PAGES["uzivatele"]["title"]; ?></a>
                                     </li>
                                     <?php
-                                        }
+                                }
+
+                                if($login->isUserLoged() && aktualni_prava(array(2),$db,$login)) {
                                     ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php?page=pridat_clanek&idclanky=123"><?php echo WEB_PAGES["pridat_clanek"]["title"]; ?></a>
+                                    </li>
+                                    <?php
+                                }
+                                ?>
                             </ul>
                         </div>
 

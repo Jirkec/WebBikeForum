@@ -34,6 +34,7 @@ class ProfilController implements IController {
 
         if($this->login->isUserLoged()) {
             $iduzivatele = $this->db->getIduzivateleByLogin($this->login->getUserLogin());
+            //print_r($iduzivatele);
             $tplData['profil'] = $this->db->getUzivateleInfo(intval($iduzivatele));
         }
         ob_start();

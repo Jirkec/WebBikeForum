@@ -43,7 +43,11 @@ class ApplicationStart {
 
         // nactu ovladac a bez ohledu na prislusnou tridu ho typuju na dane rozhrani
         /** @var IController $controller  Ovladac prislusne stranky. */
-        $controller = new $pageInfo["class_name"];
+
+        if(strcmp($pageKey,"pridat_clanek")==0 && isset($_GET["idclanky"]))
+            $controller = new $pageInfo["class_name"]($_GET["idclanky"]);
+        else
+            $controller = new $pageInfo["class_name"];
 
         // zavolam prislusny ovladac a vypisu jeho obsah
         echo $controller->show();

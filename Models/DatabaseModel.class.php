@@ -146,7 +146,8 @@ class DatabaseModel {
 
     public function getIduzivateleByLogin(string $login){
         $sql = "SELECT iduzivatele FROM ".TABLE_UZIVATELE." WHERE login = '$login'";
-        return $this->pdo->query($sql)->fetchAll()[0];
+        //echo $sql;
+        return $this->pdo->query($sql)->fetchAll()[0]['iduzivatele'];
     }
 
     public function updateInfoUzivatele(int $iduzivatele, string $jmeno, string $email, string $login)
