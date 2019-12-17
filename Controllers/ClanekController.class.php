@@ -1,11 +1,12 @@
 <?php
 // nactu rozhrani kontroleru
 require_once(DIRECTORY_CONTROLLERS."/IController.interface.php");
+require_once "functions.inc.php";
 
 /**
  * Ovladac zajistujici vypsani uvodni stranky.
  */
-class PridatClanekController implements IController {
+class ClanekController implements IController {
 
     /** @var DatabaseModel $db  Sprava databaze. */
     private $db;
@@ -36,12 +37,28 @@ class PridatClanekController implements IController {
         global $tplData;
         $tplData = [];
 
-        echo $this->idclanky;
+        $tplData['clankek'] = $this->db->getClanky($this->idclanky);
 
-        $tplData['uzivatele'] = $this->db->getUzivateleInfo();
+        if(array_key_exists('clankek', $tplData) && count($tplData['clankek'])>0 && !empty($tplData['clankek'][0]['idclanky'] > 0)) {
+            $update = true;
+        }else{
+            $update = false;
+        }
+
+        if($this->login->isUserLoged() && aktualni_prava(array(2), $this->db, $this->login)){
+            $editable = true;
+            if($update && $tplData['clankek'][0]['autor'] != $this->db->getIduzivateleByLogin($this->login->getUserLogin()) ){
+                $editable = false;
+            }
+        }else{
+            $editable = false;
+        }
 
         ob_start();
-        require(DIRECTORY_VIEWS ."/UzivateleTemplate.tpl.php");
+        if($editable)
+            require(DIRECTORY_VIEWS ."/ClanekEditTemplate.tpl.php");
+        else
+            require(DIRECTORY_VIEWS ."/ClanekDetailTemplate.tpl.php");
         $obsah = ob_get_clean();
 
         // vratim sablonu naplnenou daty

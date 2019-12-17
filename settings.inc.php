@@ -52,8 +52,8 @@ const WEB_PAGES = array(
         "class_name" => "UzivateleController",
         "title" => "Uživatelé"),
 
-    "pridat_clanek" => array("file_name" => "PridatClanekController.class.php",
-        "class_name" => "PridatClanekController",
+    "pridat_clanek" => array("file_name" => "ClanekController.class.php",
+        "class_name" => "ClanekController",
         "title" => "<span class=\"fa fa-plus\"></span> Přidat článek"),
 
     // editace profilu uzivatele

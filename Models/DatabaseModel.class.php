@@ -18,7 +18,7 @@ class DatabaseModel {
         $this->pdo->exec("set names utf8");
     }
 
-    public function getClanky(int $schvaleno = 1, int $orderByFilter = 0):array {
+    public function getClanky(int $idclanky = 0, int $schvaleno = -1, int $orderByFilter = 0):array {
         // pripravim dotaz
         $orderBy= "ORDER BY ";
         if($orderByFilter != 0)
@@ -26,17 +26,28 @@ class DatabaseModel {
         else
             $orderBy .= TABLE_CLANKY.".datumcas_vlozeni desc";
 
+
+        if($schvaleno!=-1){
+            $where[] = TABLE_CLANKY.".schvaleno = '$schvaleno'";
+        }
+        if($idclanky!=0){
+            $where[] = TABLE_CLANKY.".idclanky='$idclanky'";
+        }
+        if(!empty($where))
+            $whereSQL = "WHERE ".join(" and ",$where);
+
         $sql = "SELECT ".TABLE_CLANKY.".idclanky,
                         ".TABLE_CLANKY.".titulek,
                         ".TABLE_CLANKY.".datumcas_vlozeni,
                         ".TABLE_CLANKY.".iduzivatele as autor,
                         ".TABLE_CLANKY.".obrazek,
+                        ".TABLE_CLANKY.".schvaleno,
                         ".TABLE_HODNOCENI.".pocet_hvezd
-              FROM ".TABLE_CLANKY." 
-                left join ".TABLE_HODNOCENI." 
-                    on ".TABLE_CLANKY.".idclanky = ".TABLE_HODNOCENI.".idclanky
-              WHERE ".TABLE_CLANKY.".schvaleno = '$schvaleno' 
-              $orderBy";
+                  FROM ".TABLE_CLANKY." 
+                    left join ".TABLE_HODNOCENI." 
+                        on ".TABLE_CLANKY.".idclanky = ".TABLE_HODNOCENI.".idclanky
+                  $whereSQL      
+                  $orderBy";
         //echo $sql;
 
         // provedu a vysledek vratim jako pole

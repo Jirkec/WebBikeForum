@@ -2,6 +2,20 @@ a:hover {
     cursor:pointer;
 }
 
+body{
+    background-color: #f4f4f4;
+}
+.element_on_page{
+    background-color: white;
+    padding: 15px 15px 15px 15px;
+    border-radius: 5px;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19) !important;
+}
+
+nav{
+    box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.19) !important;
+}
+
 
 
 /* tablet */

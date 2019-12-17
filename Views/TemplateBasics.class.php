@@ -39,6 +39,7 @@ class TemplateBasics {
                 <script src="style/composer/vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
                 <script src="style/composer/vendor/components/jquery/jquery.min.js"></script>
                 <script src="jquery-ui-1.12.1/jquery-ui.min.js"></script>
+                <script src="ckeditor/ckeditor.js"></script>
 
 
                 <!--
@@ -82,7 +83,7 @@ class TemplateBasics {
                                 if($login->isUserLoged() && aktualni_prava(array(2),$db,$login)) {
                                     ?>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="index.php?page=pridat_clanek&idclanky=123"><?php echo WEB_PAGES["pridat_clanek"]["title"]; ?></a>
+                                        <a class="nav-link" href="index.php?page=pridat_clanek"><?php echo WEB_PAGES["pridat_clanek"]["title"]; ?></a>
                                     </li>
                                     <?php
                                 }
