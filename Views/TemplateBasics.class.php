@@ -77,6 +77,9 @@ class TemplateBasics {
                                     <li class="nav-item">
                                         <a class="nav-link" href="index.php?page=uzivatele"><?php echo WEB_PAGES["uzivatele"]["title"]; ?></a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php?schvaleno=0">Ke schválení</a>
+                                    </li>
                                     <?php
                                 }
 

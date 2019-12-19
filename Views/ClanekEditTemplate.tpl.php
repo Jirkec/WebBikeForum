@@ -15,35 +15,53 @@ $tplHeaders = new TemplateBasics();
 <?php
 // hlavicka
 $tplHeaders->getHTMLHeader();
-
+/*
     if($update)
         echo "update";
     else
         echo "insert";
-
+*/
+//var_dump($tplData);
         ?>
     <div class="element_on_page">
-        <form name="form_clanek">
+        <?php
+
+        if(isset($nahrani["hlaska"]) && isset($nahrani["jak"]))
+            echo "<div class=\"alert alert-".($nahrani["jak"]?"success":"danger")."\" role=\"alert\">".$nahrani["hlaska"]."</div>";
+        ?>
+
+        <form name="form_clanek" method="post" enctype="multipart/form-data" onsubmit="document.form_clanek.submit()">
             <div class="form-group">
-                <input type="text" class="form-control" id="titulek" name="titulek" placeholder="Titulek" required>
+                <input type="text" class="form-control" id="titulek" name="titulek" placeholder="Titulek" required
+                    <?php
+                    if($update)
+                        echo "value='".$tplData['clanek'][0]['titulek']."'";
+                    ?>
+                >
             </div>
+            <?php
+                if($update && file_exists(DIRECTORY_UPLOADED_FILES."/".$tplData['clanek'][0]['obrazek']) && !empty($tplData['clanek'][0]['obrazek'])){
+                    echo "<img src='".DIRECTORY_UPLOADED_FILES."/".$tplData['clanek'][0]['obrazek']."'>";
+                }
+            ?>
 
             <div class="form-group">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="customFileLang" lang="fr">
-                    <label class="custom-file-label" for="customFileLang">Nahrát obrázek</label>
-                </div>
+                    Nahrát obrázek: <input type="file" name="soubor" id="soubor">
             </div>
 
             <div class="form-group">
                 <textarea name="text" id="cke_text" rows="10" cols="80">
+                    <?php
+                    if($update)
+                        echo $tplData['clanek'][0]['text'];
+                    ?>
                 </textarea>
                 <script>
                     CKEDITOR.replace( 'cke_text' );
                 </script>
             </div>
 
-            <input type="submit" class="btn btn-primary" value="Uložit">
+            <input type="submit" class="btn btn-primary" value="Uložit" name="ulozit">
         </form>
     </div>
 

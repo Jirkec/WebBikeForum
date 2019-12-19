@@ -18,19 +18,16 @@ class DatabaseModel {
         $this->pdo->exec("set names utf8");
     }
 
-    public function getClanky(int $idclanky = 0, int $schvaleno = -1, int $orderByFilter = 0):array {
+    public function getClanky(int $idclanky = -1, int $schvaleno = -1):array {
         // pripravim dotaz
         $orderBy= "ORDER BY ";
-        if($orderByFilter != 0)
-            $orderBy .= TABLE_HODNOCENI.".pocet_hvezd desc";
-        else
-            $orderBy .= TABLE_CLANKY.".datumcas_vlozeni desc";
+        $orderBy .= TABLE_CLANKY.".datumcas_vlozeni desc";
 
 
         if($schvaleno!=-1){
             $where[] = TABLE_CLANKY.".schvaleno = '$schvaleno'";
         }
-        if($idclanky!=0){
+        if($idclanky!=-1){
             $where[] = TABLE_CLANKY.".idclanky='$idclanky'";
         }
         if(!empty($where))
@@ -42,10 +39,8 @@ class DatabaseModel {
                         ".TABLE_CLANKY.".iduzivatele as autor,
                         ".TABLE_CLANKY.".obrazek,
                         ".TABLE_CLANKY.".schvaleno,
-                        ".TABLE_HODNOCENI.".pocet_hvezd
+                        ".TABLE_CLANKY.".text
                   FROM ".TABLE_CLANKY." 
-                    left join ".TABLE_HODNOCENI." 
-                        on ".TABLE_CLANKY.".idclanky = ".TABLE_HODNOCENI.".idclanky
                   $whereSQL      
                   $orderBy";
         //echo $sql;
@@ -53,6 +48,31 @@ class DatabaseModel {
         // provedu a vysledek vratim jako pole
         // protoze je o uzkazku, tak netestuju, ze bylo neco vraceno
         return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function getHodnoceniByIdclanky(int $idclanky){
+        $sql = "SELECT ".TABLE_HODNOCENI.".komentar,
+                        ".TABLE_HODNOCENI.".pocet_hvezd,
+                        ".TABLE_HODNOCENI.".idhodnoceni,
+                        ".TABLE_UZIVATELE.".jmeno
+                FROM ".TABLE_HODNOCENI." 
+                    left join ".TABLE_UZIVATELE."
+                        on ".TABLE_HODNOCENI.".iduzivatele = ".TABLE_UZIVATELE.".iduzivatele
+                WHERE ".TABLE_HODNOCENI.".idclanky='$idclanky' and ".TABLE_HODNOCENI.".hodnoceno = 1
+                ORDER BY ".TABLE_HODNOCENI.".datumcas_vlozeni desc";
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function updateHodnoceni(int $pocet_hvezd, string $komentar, int $idclanky, int $iduzivatele){
+        $sql = "UPDATE ".TABLE_HODNOCENI." SET (pocet_hvezd, datumcas_vlozeni, hodnoceno, komentar) 
+                                        VALUES ('$pocet_hvezd', NOW(), 1, '$komentar') 
+                WHERE   idclanky='$idclanky' 
+                    and iduzivatele='$iduzivatele';";
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public function insertNewUser(string $jmeno, string $heslo, string $email, string $login){
@@ -186,7 +206,57 @@ class DatabaseModel {
             return true;
         }
     }
-    
+
+    public function insertClanek(string $nazev_souboru, string $titulek, string $text, int $autor){
+        $sql = "INSERT INTO ".TABLE_CLANKY." (
+                                            text,
+                                            titulek,
+                                            obrazek,
+                                            iduzivatele
+                                             ) VALUES (
+                                             '$text',
+                                             '$titulek',
+                                             '$nazev_souboru',
+                                             '$autor'
+                                             );";
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public function updateClanek(string $nazev_souboru = "", string $titulek = "", string $text = "", int $idclanky, int $schvaleno = -1){
+        $sql = "";
+        if(!empty($nazev_souboru)){
+            $sql .= "UPDATE ".TABLE_CLANKY." SET obrazek='$nazev_souboru' WHERE idclanky = '$idclanky';";
+        }
+        if(!empty($titulek)){
+            $sql .= "UPDATE ".TABLE_CLANKY." SET titulek='$titulek' WHERE idclanky = '$idclanky';";
+        }
+        if(!empty($text)){
+            $sql .= "UPDATE ".TABLE_CLANKY." SET text='$text' WHERE idclanky = '$idclanky';";
+        }
+        if($schvaleno != -1){
+            $sql .= "UPDATE ".TABLE_CLANKY." SET schvaleno='$schvaleno' WHERE idclanky = '$idclanky';";
+        }
+
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
+    public function muzeUzivatelPridatRecenzi(int $iduzivatele, int $idclanky){
+        $sql = "SELECT idhodnoceni FROM ".TABLE_HODNOCENI." WHERE iduzivatele='$iduzivatele' and idclanky='$idclanky'";
+
+        return !empty($this->pdo->query($sql)->fetchAll()[0]['idhodnoceni']);
+    }
+
 }
+
+
 
 ?>

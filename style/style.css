@@ -16,7 +16,20 @@ nav{
     box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.19) !important;
 }
 
+img{
+    width: 100%;
+}
 
+#div_nabidka{
+    float: right;
+}
+
+#h1_titulek{
+    display: inline;
+}
+
+.div_mini_clanek{
+}
 
 /* tablet */
 @media screen and (min-width: 768px) {

@@ -1,6 +1,7 @@
 <?php
 // nactu rozhrani kontroleru
 require_once(DIRECTORY_CONTROLLERS."/IController.interface.php");
+require_once "functions.inc.php";
 
 /**
  * Ovladac zajistujici vypsani uvodni stranky.
@@ -20,6 +21,7 @@ class HomeController implements IController {
         $this->db = new DatabaseModel();
         require_once (DIRECTORY_MODELS ."/LoginModel.class.php");
         $this->login = new LoginModel();
+
     }
 
     /**
@@ -30,8 +32,15 @@ class HomeController implements IController {
         //// vsechna data sablony budou globalni
         global $tplData;
         $tplData = [];
-        // data pohadek
-        $tplData['clanky'] = $this->db->getClanky();
+
+        global $schvaleno;
+        if(aktualni_prava(array(1),$this->db, $this->login) && isset($schvaleno) && $schvaleno==0){
+            $schvaleno =0;
+        }else{
+            $schvaleno = 1;
+        }
+
+        $tplData['clanky'] = $this->db->getClanky(-1, $schvaleno);
 
         //// vypsani prislusne sablony
         // zapnu output buffer pro odchyceni vypisu sablony

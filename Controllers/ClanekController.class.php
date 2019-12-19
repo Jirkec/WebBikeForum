@@ -12,6 +12,7 @@ class ClanekController implements IController {
     private $db;
     private $login;
     private $idclanky;
+    private $iduzivatele;
     /**
      * Inicializace pripojeni k databazi.
      */
@@ -26,6 +27,11 @@ class ClanekController implements IController {
             $idclanky = 0;
         }
         $this->idclanky = $idclanky;
+
+        if($this->login->isUserLoged())
+            $this->iduzivatele = $this->db->getIduzivateleByLogin($this->login->getUserLogin());
+        else
+            $this->iduzivatele = -1;
     }
 
     /**
@@ -36,10 +42,38 @@ class ClanekController implements IController {
         //// vsechna data sablony budou globalni
         global $tplData;
         $tplData = [];
+/*
+        echo $this->idclanky;
+        print_r($_POST);
+        print_r($_FILES);
+*/
+        if(isset($_POST["ulozit"])){        //ukládání | update
 
-        $tplData['clankek'] = $this->db->getClanky($this->idclanky);
+            if(isset($_FILES["soubor"]) && !empty($_FILES["soubor"]["name"])){
+                $nahrani = nahrani_souboru($_FILES["soubor"]);
+            }else{
+                $nahrani["hlaska"] = "";
+                $nahrani["jak"] = true;
+                $nahrani["nazev_souboru"] = "";
+            }
 
-        if(array_key_exists('clankek', $tplData) && count($tplData['clankek'])>0 && !empty($tplData['clankek'][0]['idclanky'] > 0)) {
+            if($nahrani["jak"]){
+                if($this->idclanky == 0){
+                    $nahrani["jak"] = $this->db->insertClanek($nahrani["nazev_souboru"], $_POST["titulek"], $_POST["text"], $this->iduzivatele);
+                }else{
+                    $nahrani["jak"] = $this->db->updateClanek($nahrani["nazev_souboru"], $_POST["titulek"], $_POST["text"], $this->idclanky);
+                }
+            }
+
+            if($nahrani["jak"]){
+                $nahrani["hlaska"] .= "Úspěšně uloženo";
+            }
+        }
+
+
+        $tplData['clanek'] = $this->db->getClanky($this->idclanky);
+
+        if(array_key_exists('clanek', $tplData) && !empty($tplData['clanek']) && !empty($tplData['clanek'][0]['idclanky']) ) {
             $update = true;
         }else{
             $update = false;
@@ -47,11 +81,18 @@ class ClanekController implements IController {
 
         if($this->login->isUserLoged() && aktualni_prava(array(2), $this->db, $this->login)){
             $editable = true;
-            if($update && $tplData['clankek'][0]['autor'] != $this->db->getIduzivateleByLogin($this->login->getUserLogin()) ){
+            if($update && $tplData['clanek'][0]['autor'] != $this->iduzivatele ){
                 $editable = false;
             }
         }else{
             $editable = false;
+        }
+
+        $uzivatel_muze_pridat_recenci = false;
+        if(!$editable && !empty($this->idclanky)){
+            $uzivatel_muze_pridat_recenci = $this->db->muzeUzivatelPridatRecenzi($this->iduzivatele, $this->idclanky);
+
+            $tplData["hodnoceni"] = $this->db->getHodnoceniByIdclanky($this->idclanky);
         }
 
         ob_start();

@@ -42,6 +42,59 @@ function aktualni_prava(array $prava, DatabaseModel $db, LoginModel $login){
     return !$ma_prava;
 }
 
+function nahrani_souboru(array $soubor):array {
+    $nazev_souboru = $soubor["name"];
+    $tmp_name = $soubor["tmp_name"];
+    $size = $soubor["size"];
+
+    $return["hlaska"] = "";
+    $return["jak"] = true;
+    $return["nazev_souboru"] = "";
+
+    $target_file = DIRECTORY_UPLOADED_FILES ."/".rand(0, 10000)."_".basename($nazev_souboru);
+    while(file_exists($target_file)) {
+        $target_file = DIRECTORY_UPLOADED_FILES ."/".rand(0, 10000)."_".basename($nazev_souboru);
+    }
+
+    $return["nazev_souboru"] = str_replace(DIRECTORY_UPLOADED_FILES ."/", "", $target_file);
+
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+        $check = getimagesize($tmp_name);
+        if($check !== false) {
+            //$return["hlaska"] .= "Soubor je obrázek - " . $check["mime"] . ".";
+            $return["jak"] = 1;
+        } else {
+            $return["hlaska"] .= "CHYBA, soubor není obrázek.";
+            $return["jak"] = 0;
+        }
+
+
+// Check file size
+    if ($size > 5000000) {
+        $return["hlaska"] .= "CHYBA, soubor je moc velký.";
+        $return["jak"] = 0;
+    }
+// Allow certain file formats
+    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif" ) {
+        $return["hlaska"] .= "CHYBA, pouze JPG, JPEG, PNG & GIF soubory jsou podporovány.";
+        $return["jak"] = 0;
+    }
+
+    if ($return["jak"] == 0) {
+        $return["hlaska"] .= "CHYBA, soubor nebyl nahrán.";
+    } else {
+        if (move_uploaded_file($tmp_name, $target_file)) {
+            //$return["hlaska"] .= "Soubor ". basename($nazev_souboru). " byl nahrán.";
+        } else {
+            $return["hlaska"] .= "CHYBA, Nastala chyba při nahrávání souboru.";
+        }
+    }
+
+    return $return;
+}
+
 ?>
 
 <script>
@@ -167,6 +220,41 @@ function odeslat_edit_profilu() {
             location.reload();
         }else{
             alert("Změna se nepovedla");
+        }
+    });
+}
+
+function show_div_recence() {
+    prepocitat_velikost_dialogu();
+
+    $('#div_recence').dialog({ autoOpen: false });
+    $('#div_recence').dialog( { title: "Recenze", resizable: false, modal: true, show: 'fade', width: dialog_width, height: dialog_height, hide: 'fade' } );
+    $('#div_recence').dialog({
+        position: { my: "center center", of: document }
+    })
+    $('#div_recence').dialog('open');
+}
+
+function odeslat_recenzi() {
+    var posting = jQuery.post("<?php echo DIRECTORY_AJAX; ?>/recenze_w.php", jQuery("#form_recence").serialize());
+    posting.done(function(data)
+    {
+        if(data == 1){
+            location.reload();
+        }else{
+            alert("Uložení recenze se nepovedlo");
+        }
+    });
+}
+
+function schvalit_clanek(idclanky) {
+    var posting = jQuery.post("<?php echo DIRECTORY_AJAX; ?>/schvalit_clanek_w.php", "idclanky="+idclanky);
+    posting.done(function(data)
+    {
+        if(data == 1){
+            location.reload();
+        }else{
+            alert("Schválení článku se nepovedlo");
         }
     });
 }

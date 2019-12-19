@@ -34,6 +34,7 @@ const DIRECTORY_CONTROLLERS = "Controllers";
 const DIRECTORY_MODELS = "Models";
 const DIRECTORY_VIEWS = "Views";
 const DIRECTORY_AJAX = "ajax";
+const DIRECTORY_UPLOADED_FILES = "nahrane_soubory";
 
 /** Dostupne webove stranky. */
 const WEB_PAGES = array(
