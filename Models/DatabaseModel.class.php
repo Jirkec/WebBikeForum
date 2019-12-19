@@ -17,7 +17,7 @@ class DatabaseModel {
         // vynuceni kodovani UTF-8
         $this->pdo->exec("set names utf8");
     }
-
+/*
     public function testPrepered(){
         $iduzivatele = 1;
 
@@ -28,7 +28,7 @@ class DatabaseModel {
         $s->execute();
         return $s->fetchAll();
     }
-
+*/
     public function getClanky(int $idclanky = -1, int $schvaleno = -1, int $hodnoceno = -1, int $iduzivatele = -1, int $idrecenzent = -1):array {
         // pripravim dotaz
         $orderBy= "ORDER BY ";
@@ -48,7 +48,7 @@ class DatabaseModel {
             $where[] = TABLE_CLANKY.".iduzivatele = :iduzivatele";
         }
         if($idrecenzent != -1){
-            $where[] = TABLE_HODNOCENI.".iduzivatele = :$idrecenzent";
+            $where[] = TABLE_HODNOCENI.".iduzivatele = :idrecenzent";
         }
         if(!empty($where))
             $whereSQL = "WHERE ".join(" and ",$where);
@@ -74,15 +74,12 @@ class DatabaseModel {
             $s->bindValue(":schvaleno", $schvaleno);
         }
         if($idclanky!=-1){
-            $where[] = TABLE_CLANKY.".idclanky=:idclanky";
             $s->bindValue(":idclanky", $idclanky);
         }
         if($iduzivatele != -1){
-            $where[] = TABLE_CLANKY.".iduzivatele = :iduzivatele";
             $s->bindValue(":iduzivatele", $iduzivatele);
         }
         if($idrecenzent != -1){
-            $where[] = TABLE_HODNOCENI.".iduzivatele = :idrecenzent";
             $s->bindValue(":idrecenzent", $idrecenzent);
         }
 
@@ -100,27 +97,49 @@ class DatabaseModel {
                 FROM ".TABLE_HODNOCENI." 
                     left join ".TABLE_UZIVATELE."
                         on ".TABLE_HODNOCENI.".iduzivatele = ".TABLE_UZIVATELE.".iduzivatele
-                WHERE ".TABLE_HODNOCENI.".idclanky='$idclanky' and ".TABLE_HODNOCENI.".hodnoceno = 1
+                WHERE ".TABLE_HODNOCENI.".idclanky=:idclanky and ".TABLE_HODNOCENI.".hodnoceno = 1
                 ORDER BY ".TABLE_HODNOCENI.".datumcas_vlozeni desc";
-        return $this->pdo->query($sql)->fetchAll();
+
+        $s = $this->pdo->prepare($sql);
+        $s->bindValue(":idclanky", $idclanky);
+        $s->execute();
+        return $s->fetchAll();
     }
 
     public function updateRecenze(int $pocet_hvezd, string $komentar, int $idclanky, int $iduzivatele){
         $dnesni_datum = date("Y-m-d H:i:s");
-        $sql = "UPDATE ".TABLE_HODNOCENI." SET  pocet_hvezd='$pocet_hvezd', 
-                                                datumcas_vlozeni='$dnesni_datum', 
-                                                hodnoceno= '1', 
-                                                komentar= '$komentar'
-                WHERE   idclanky='$idclanky' 
-                    and iduzivatele='$iduzivatele';";
+        $sql = "UPDATE ".TABLE_HODNOCENI." SET  pocet_hvezd=:pocet_hvezd, 
+                                                datumcas_vlozeni=:datumcas_vlozeni, 
+                                                hodnoceno= 1, 
+                                                komentar=:komentar
+                WHERE   idclanky=:idclanky 
+                    and iduzivatele=:iduzivatele;";
 
         //echo $sql;
+        $s = $this->pdo->prepare($sql);
+        $s->bindValue(":pocet_hvezd", $pocet_hvezd);
+        $s->bindValue(":datumcas_vlozeni", $dnesni_datum);
+        $s->bindValue(":komentar", $komentar);
+        $s->bindValue(":idclanky", $idclanky);
+        $s->bindValue(":iduzivatele", $iduzivatele);
+        return $s->execute();
+/*
         if($this->pdo->exec($sql) === false){
             return false;
         }else{
             return true;
-        }
+        }*/
     }
+
+
+
+
+
+
+
+
+
+
 
     public function insertNewUser(string $jmeno, string $heslo, string $email, string $login){
 

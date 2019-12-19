@@ -39,38 +39,46 @@ class HomeController implements IController {
         global $tplData;
         $tplData = [];
 
-        global $schvaleno;
-        if(aktualni_prava(array(1),$this->db, $this->login) && isset($schvaleno) && $schvaleno==0){
-            $schvaleno =0;
+        if($this->login->isUserLoged()) {
+            global $schvaleno;
+            if (aktualni_prava(array(1), $this->db, $this->login) && isset($schvaleno) && $schvaleno == 0) {
+                $schvaleno = 0;
+            } else {
+                $schvaleno = 1;
+            }
+
+            global $hodnoceno;
+            if (aktualni_prava(array(1), $this->db, $this->login) && isset($hodnoceno) && $hodnoceno == 0) {
+                $hodnoceno = 0;
+                $schvaleno = -1;
+            } else {
+                $hodnoceno = -1;
+            }
+
+            global $moje;
+            if (aktualni_prava(array(1), $this->db, $this->login) && isset($moje) && $moje == 1 && $this->iduzivatele != -1) {
+                $moje = $this->iduzivatele;
+                $schvaleno = -1;
+                $hodnoceno = -1;
+            } else {
+                $moje = -1;
+            }
+
+            global $recenze;
+            if (aktualni_prava(array(1), $this->db, $this->login) && isset($recenze) && $recenze == 1 && $this->iduzivatele != -1) {
+                $recenze = $this->iduzivatele;
+                $schvaleno = -1;
+                $hodnoceno = -1;
+                $moje = -1;
+            } else {
+                $recenze = -1;
+            }
+
         }else{
             $schvaleno = 1;
-        }
-
-        global $hodnoceno;
-        if(aktualni_prava(array(1),$this->db, $this->login) && isset($hodnoceno) && $hodnoceno==0){
-            $hodnoceno =0;
-            $schvaleno =-1;
-        }else{
-            $hodnoceno = -1;
-        }
-
-        global $moje;
-        if(aktualni_prava(array(1),$this->db, $this->login) && isset($moje) && $moje==1 && $this->iduzivatele!=-1 ){
-            $moje = $this->iduzivatele;
-            $schvaleno =-1;
-            $hodnoceno = -1;
-        }else{
             $moje = -1;
-        }
-
-        global $recenze;
-        if(aktualni_prava(array(1),$this->db, $this->login) && isset($recenze) && $recenze==1 && $this->iduzivatele!=-1 ){
-            $recenze = $this->iduzivatele;
-            $schvaleno =-1;
-            $hodnoceno = -1;
-            $moje = -1;
-        }else{
             $recenze = -1;
+            $hodnoceno = -1;
         }
 
         $tplData['clanky'] = $this->db->getClanky(-1, $schvaleno, $hodnoceno, $moje, $recenze);
