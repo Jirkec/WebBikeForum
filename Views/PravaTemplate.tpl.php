@@ -22,6 +22,8 @@ $tplHeaders = new TemplateBasics();
 // hlavicka
 $tplHeaders->getHTMLHeader();
 
+//print_r($tplData['testprep']);
+
 if($this->login->isUserLoged() && aktualni_prava(array(1), $this->db, $this->login)){
 
     if(array_key_exists('prava', $tplData) && count($tplData['prava'])>0 ) {

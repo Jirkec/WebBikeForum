@@ -20,12 +20,26 @@ img{
     width: 100%;
 }
 
+.img_hvezda{
+    max-width: 10em;
+}
+.span_datum{
+    display: block;
+    font-size: smaller;
+}
+
 #div_nabidka{
     float: right;
 }
 
-#h1_titulek{
+#h1_titulek, .h4_titulek{
     display: inline;
+    text-overflow: ellipsis
+}
+
+.div_mini_clanek a{
+    color: black;
+
 }
 
 .div_mini_clanek{

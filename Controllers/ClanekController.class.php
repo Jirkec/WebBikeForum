@@ -57,6 +57,9 @@ class ClanekController implements IController {
                 $nahrani["nazev_souboru"] = "";
             }
 
+            strip_tags($nahrani["nazev_souboru"]);
+            strip_tags($_POST["titulek"]);
+
             if($nahrani["jak"]){
                 if($this->idclanky == 0){
                     $nahrani["jak"] = $this->db->insertClanek($nahrani["nazev_souboru"], $_POST["titulek"], $_POST["text"], $this->iduzivatele);
@@ -93,6 +96,7 @@ class ClanekController implements IController {
             $uzivatel_muze_pridat_recenci = $this->db->muzeUzivatelPridatRecenzi($this->iduzivatele, $this->idclanky);
 
             $tplData["hodnoceni"] = $this->db->getHodnoceniByIdclanky($this->idclanky);
+            $tplData['recenzenti'] = $this->db->getUzivateleByPravo(3);
         }
 
         ob_start();

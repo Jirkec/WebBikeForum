@@ -259,4 +259,29 @@ function schvalit_clanek(idclanky) {
     });
 }
 
+function show_div_poslat_k_recenzi() {
+    prepocitat_velikost_dialogu();
+
+    $('#div_poslat_k_recenzi').dialog({ autoOpen: false });
+    $('#div_poslat_k_recenzi').dialog( { title: "Poslat k recenzi", resizable: false, modal: true, show: 'fade', width: dialog_width, height: dialog_height, hide: 'fade' } );
+    $('#div_poslat_k_recenzi').dialog({
+        position: { my: "center center", of: document }
+    })
+    $('#div_poslat_k_recenzi').dialog('open');
+}
+
+function odeslat_k_recenci() {
+    var posting = jQuery.post("<?php echo DIRECTORY_AJAX; ?>/odeslat_k_recenzi_w.php", jQuery("#form_poslat_k_recenzi").serialize());
+    posting.done(function(data)
+    {
+        if(data == 1){
+            location.reload();
+        }else{
+            alert("Odeslatni k recenzi se nepovedlo.");
+        }
+    });
+}
+
+
+
 </script>

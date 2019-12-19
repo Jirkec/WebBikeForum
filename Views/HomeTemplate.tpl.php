@@ -29,18 +29,18 @@ if(array_key_exists('clanky', $tplData) && count($tplData['clanky'])>0 ) {
     foreach ($tplData['clanky'] as $d) {
         $res.= "<div class='col-sm-6 col-md-3 col-lg-2 div_mini_clanek'>
                     <a href='index.php?page=pridat_clanek&idclanky=$d[idclanky]'>
-                        <div>";
+                        ";
 
             if(file_exists(DIRECTORY_UPLOADED_FILES."/".$d["obrazek"]) && !empty($d["obrazek"])){
                 $res .= "<img src='".DIRECTORY_UPLOADED_FILES."/".$d["obrazek"]."'>";
             }else{
                 $res .= "<img src='".DIRECTORY_UPLOADED_FILES."/zakladni_nahled.png'>";
             }
-                               $res .= "<div class='div_mini_clanek_info'>
-                                    <span>".$d["titulek"]."</span>
-                                    <span>".date("Y-m-d", strtotime($d["datumcas_vlozeni"]))."</span>
-                                    <span>by ".$this->db->getUzivateleInfo($d["autor"])[0]["jmeno"]."</span>
-                                </div>";
+                               $res .= "
+                                    <h4 class='h4_titulek'>".$d["titulek"]."</h4>
+                                    <span class='span_autor'>by ".$this->db->getUzivateleInfo($d["autor"])[0]["jmeno"]."</span>
+                                    <span class='span_datum'>".date("Y-m-d", strtotime($d["datumcas_vlozeni"]))."</span>
+                                ";
 
 
                         $pocet_hvezd = 0;
@@ -57,7 +57,7 @@ if(array_key_exists('clanky', $tplData) && count($tplData['clanky'])>0 ) {
                             $res .= "Nehodnoceno";
                         }
 
-                     $res.=  "</div>
+                     $res.=  "
                    </a>
                </div>";
 

@@ -25,8 +25,9 @@ $tplHeaders->getHTMLHeader();
                     echo "<div id='div_nabidka'>";
                         if($tplData['clanek'][0]['schvaleno'] == 0)
                             echo "<a onclick='schvalit_clanek($this->idclanky)'><span class='fa fa-check'></span> Schválit</a><br>";
-                    echo "<a><span class='fa fa-mail-forward'></span> Poslat k recenzi</a></div>";
+                    echo "<a onclick='show_div_poslat_k_recenzi()'><span class='fa fa-mail-forward'></span> Poslat k recenzi</a></div>";
             }
+
             echo "<span class='info'>by ".$this->db->getUzivateleInfo($tplData["clanek"][0]["autor"])[0]["jmeno"]."</span>
                     
                   </div>";
@@ -40,7 +41,7 @@ $tplHeaders->getHTMLHeader();
             echo "<div id='div_hodnoceni'>";
                 echo "<span class='font-weight-bold'>Recenze</span>";
 
-                //if($uzivatel_muze_pridat_recenci)
+                if($uzivatel_muze_pridat_recenci)
                     echo "&nbsp;<a onclick='show_div_recence()'><span class='fa fa-plus'></span></a>";
 
                     if(isset($tplData["hodnoceni"]) && !empty($tplData["hodnoceni"])){
@@ -56,7 +57,7 @@ $tplHeaders->getHTMLHeader();
                             ?>
                             <tr class="">
                                 <td><?php echo $d["jmeno"]; ?></td>
-                                <td><?php echo "<img src='style/".$d["pocet_hvezd"]."_hvezda.png'>"; ?></td>
+                                <td><?php echo "<img src='style/".$d["pocet_hvezd"]."_hvezda.png' class='img_hvezda'>"; ?></td>
                                 <td><?php echo $d["komentar"]; ?></td>
                             </tr>
 
@@ -68,22 +69,48 @@ $tplHeaders->getHTMLHeader();
                     }
             echo "</div>";
         echo "</div>";
-?>
-        <div id="div_recence" title="Recenze" style="display: none">
-            <form name="form_recence" id="form_recence">
-                <label for="pocet_hvezd">Počet hvězd</label>
-                <input type="number" class="form-control" id="pocet_hvezd" name="pocet_hvezd" max="5" min="1" required>
 
-                <label for="komentar">Komentář</label>
-                <input type="text" class="form-control" id="komentar" name="komentar">
+        if(aktualni_prava(array(1),$this->db, $this->login)) {
+            ?>
+            <div id="div_recence" title="Recenze" style="display: none">
+                <form name="form_recence" id="form_recence">
+                    <label for="pocet_hvezd">Počet hvězd</label>
+                    <input type="number" class="form-control" id="pocet_hvezd" name="pocet_hvezd" max="5" min="1"
+                           required>
 
-                <input type="hidden" name="iduzivatele" value="<?php echo $this->iduzivatele; ?>">
-                <input type="hidden" name="idclanky"    value="<?php echo $this->idclanky; ?>">
+                    <label for="komentar">Komentář</label>
+                    <input type="text" class="form-control" id="komentar" name="komentar">
 
-            </form>
-            <br><button class="btn btn-primary" onclick="odeslat_recenci()">Uložit recenzi</button>
-        </div>
-<?php
+                    <input type="hidden" name="iduzivatele" value="<?php echo $this->iduzivatele; ?>">
+                    <input type="hidden" name="idclanky" value="<?php echo $this->idclanky; ?>">
+
+                </form>
+                <br>
+                <button class="btn btn-primary" onclick="odeslat_recenzi()">Uložit recenzi</button>
+            </div>
+
+            <div id="div_poslat_k_recenzi" title="Poslat k recenzi" style="display: none">
+                <form name="form_poslat_k_recenzi" id="form_poslat_k_recenzi">
+                    <div class="form-check">
+                        <?php
+                            if(isset($tplData["recenzenti"]) && !empty($tplData["recenzenti"])){
+                                foreach ($tplData["recenzenti"] as $r){
+                                    echo "<input class=\"form-check-input\" type=\"checkbox\" value='$r[iduzivatele]' id=\"recenzent_$r[iduzivatele]\" name='recenzenti[]'>";
+                                    echo "<label class=\"form-check-label\" for=\"recenzent_$r[iduzivatele]\">$r[jmeno]</label>";
+                                    echo "<br>";
+                                }
+                            }
+                        ?>
+                    </div>
+                    <input type="hidden" name="iduzivatele_predal" value="<?php echo $this->iduzivatele; ?>">
+                    <input type="hidden" name="idclanky" value="<?php echo $this->idclanky; ?>">
+
+                </form>
+                <br>
+                <button class="btn btn-primary" onclick="odeslat_k_recenci()">Odeslat k recenzi</button>
+            </div>
+            <?php
+        }
     }else{
         echo "<div class=\"alert alert-warning\" role=\"alert\">Nenalezen požadovaný článek</div>";
     }

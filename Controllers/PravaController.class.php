@@ -35,6 +35,8 @@ class PravaController implements IController {
             $tplData['prava'] = $this->db->getPrava();
         }
 
+        //$tplData['testprep'] = $this->db->testPrepered();
+
         ob_start();
         require(DIRECTORY_VIEWS ."/PravaTemplate.tpl.php");
         $obsah = ob_get_clean();

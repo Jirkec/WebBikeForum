@@ -80,13 +80,27 @@ class TemplateBasics {
                                     <li class="nav-item">
                                         <a class="nav-link" href="index.php?schvaleno=0">Ke schválení</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php?hodnoceno=0">Poslat k recenzi</a>
+                                    </li>
                                     <?php
                                 }
 
                                 if($login->isUserLoged() && aktualni_prava(array(2),$db,$login)) {
                                     ?>
                                     <li class="nav-item">
+                                        <a class="nav-link" href="index.php?moje=1">Mé články</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" href="index.php?page=pridat_clanek"><?php echo WEB_PAGES["pridat_clanek"]["title"]; ?></a>
+                                    </li>
+                                    <?php
+                                }
+
+                                if($login->isUserLoged() && aktualni_prava(array(3),$db,$login)) {
+                                    ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="index.php?recenze=1">Moje hodnocení</a>
                                     </li>
                                     <?php
                                 }

@@ -11,6 +11,7 @@ class HomeController implements IController {
     /** @var DatabaseModel $db  Sprava databaze. */
     private $db;
     private $login;
+    private $iduzivatele;
 
     /**
      * Inicializace pripojeni k databazi.
@@ -21,6 +22,11 @@ class HomeController implements IController {
         $this->db = new DatabaseModel();
         require_once (DIRECTORY_MODELS ."/LoginModel.class.php");
         $this->login = new LoginModel();
+
+        if($this->login->isUserLoged())
+            $this->iduzivatele = $this->db->getIduzivateleByLogin($this->login->getUserLogin());
+        else
+            $this->iduzivatele = -1;
 
     }
 
@@ -40,7 +46,35 @@ class HomeController implements IController {
             $schvaleno = 1;
         }
 
-        $tplData['clanky'] = $this->db->getClanky(-1, $schvaleno);
+        global $hodnoceno;
+        if(aktualni_prava(array(1),$this->db, $this->login) && isset($hodnoceno) && $hodnoceno==0){
+            $hodnoceno =0;
+            $schvaleno =-1;
+        }else{
+            $hodnoceno = -1;
+        }
+
+        global $moje;
+        if(aktualni_prava(array(1),$this->db, $this->login) && isset($moje) && $moje==1 && $this->iduzivatele!=-1 ){
+            $moje = $this->iduzivatele;
+            $schvaleno =-1;
+            $hodnoceno = -1;
+        }else{
+            $moje = -1;
+        }
+
+        global $recenze;
+        if(aktualni_prava(array(1),$this->db, $this->login) && isset($recenze) && $recenze==1 && $this->iduzivatele!=-1 ){
+            $recenze = $this->iduzivatele;
+            $schvaleno =-1;
+            $hodnoceno = -1;
+            $moje = -1;
+        }else{
+            $recenze = -1;
+        }
+
+        $tplData['clanky'] = $this->db->getClanky(-1, $schvaleno, $hodnoceno, $moje, $recenze);
+
 
         //// vypsani prislusne sablony
         // zapnu output buffer pro odchyceni vypisu sablony

@@ -8,6 +8,9 @@ $db = new DatabaseModel();
 require_once ($cesta.DIRECTORY_MODELS ."/LoginModel.class.php");
 $login = new LoginModel();
 
+
+if($login->isUserLoged() && aktualni_prava(array(1),$db,$login)) {
+
 if(isset($iduzivatele)){?>
     <div id="div_edit_prava" style="display: none;">
         <form name="form_edit_prava" id="form_edit_prava">
@@ -52,6 +55,7 @@ if(isset($iduzivatele)){?>
         <br><button class="btn btn-primary" onclick="odeslat_edit_prava(<?php echo $iduzivatele; ?>)">Uložit</button>
     </div>
 <?php
+}
 }
 
 

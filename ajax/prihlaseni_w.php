@@ -11,6 +11,8 @@ $cesta = "../";
 
     $jak = 0;
     if(!empty($_POST["heslo"]) && !empty($_POST["login"])){
+        strip_tags($_POST["heslo"]);
+        strip_tags($_POST["login"]);
 
         $heslo_spravne = $db->getHesloByLogin($_POST["login"])[0]["heslo"];
 //print_r($db->getHesloByLogin($_POST["login"]));

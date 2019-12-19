@@ -18,17 +18,37 @@ class DatabaseModel {
         $this->pdo->exec("set names utf8");
     }
 
-    public function getClanky(int $idclanky = -1, int $schvaleno = -1):array {
+    public function testPrepered(){
+        $iduzivatele = 1;
+
+        $sql = "SELECT iduzivatele, jmeno FROM uzivatele WHERE iduzivatele = :iduzivatele";
+        $s = $this->pdo->prepare($sql);
+        $s->bindValue(":iduzivatele", 1);
+
+        $s->execute();
+        return $s->fetchAll();
+    }
+
+    public function getClanky(int $idclanky = -1, int $schvaleno = -1, int $hodnoceno = -1, int $iduzivatele = -1, int $idrecenzent = -1):array {
         // pripravim dotaz
         $orderBy= "ORDER BY ";
         $orderBy .= TABLE_CLANKY.".datumcas_vlozeni desc";
 
 
         if($schvaleno!=-1){
-            $where[] = TABLE_CLANKY.".schvaleno = '$schvaleno'";
+            $where[] = TABLE_CLANKY.".schvaleno = :schvaleno";
         }
         if($idclanky!=-1){
-            $where[] = TABLE_CLANKY.".idclanky='$idclanky'";
+            $where[] = TABLE_CLANKY.".idclanky=:idclanky";
+        }
+        if($hodnoceno == 0){
+            $where[] = TABLE_HODNOCENI.".idclanky is null";
+        }
+        if($iduzivatele != -1){
+            $where[] = TABLE_CLANKY.".iduzivatele = :iduzivatele";
+        }
+        if($idrecenzent != -1){
+            $where[] = TABLE_HODNOCENI.".iduzivatele = :$idrecenzent";
         }
         if(!empty($where))
             $whereSQL = "WHERE ".join(" and ",$where);
@@ -41,13 +61,35 @@ class DatabaseModel {
                         ".TABLE_CLANKY.".schvaleno,
                         ".TABLE_CLANKY.".text
                   FROM ".TABLE_CLANKY." 
+                      left join ".TABLE_HODNOCENI."
+                        on ".TABLE_CLANKY.".idclanky = ".TABLE_HODNOCENI.".idclanky 
                   $whereSQL      
                   $orderBy";
         //echo $sql;
 
-        // provedu a vysledek vratim jako pole
-        // protoze je o uzkazku, tak netestuju, ze bylo neco vraceno
-        return $this->pdo->query($sql)->fetchAll();
+
+        $s = $this->pdo->prepare($sql);
+
+        if($schvaleno!=-1){
+            $s->bindValue(":schvaleno", $schvaleno);
+        }
+        if($idclanky!=-1){
+            $where[] = TABLE_CLANKY.".idclanky=:idclanky";
+            $s->bindValue(":idclanky", $idclanky);
+        }
+        if($iduzivatele != -1){
+            $where[] = TABLE_CLANKY.".iduzivatele = :iduzivatele";
+            $s->bindValue(":iduzivatele", $iduzivatele);
+        }
+        if($idrecenzent != -1){
+            $where[] = TABLE_HODNOCENI.".iduzivatele = :idrecenzent";
+            $s->bindValue(":idrecenzent", $idrecenzent);
+        }
+
+
+
+        $s->execute();
+        return $s->fetchAll();
     }
 
     public function getHodnoceniByIdclanky(int $idclanky){
@@ -63,11 +105,16 @@ class DatabaseModel {
         return $this->pdo->query($sql)->fetchAll();
     }
 
-    public function updateHodnoceni(int $pocet_hvezd, string $komentar, int $idclanky, int $iduzivatele){
-        $sql = "UPDATE ".TABLE_HODNOCENI." SET (pocet_hvezd, datumcas_vlozeni, hodnoceno, komentar) 
-                                        VALUES ('$pocet_hvezd', NOW(), 1, '$komentar') 
+    public function updateRecenze(int $pocet_hvezd, string $komentar, int $idclanky, int $iduzivatele){
+        $dnesni_datum = date("Y-m-d H:i:s");
+        $sql = "UPDATE ".TABLE_HODNOCENI." SET  pocet_hvezd='$pocet_hvezd', 
+                                                datumcas_vlozeni='$dnesni_datum', 
+                                                hodnoceno= '1', 
+                                                komentar= '$komentar'
                 WHERE   idclanky='$idclanky' 
                     and iduzivatele='$iduzivatele';";
+
+        //echo $sql;
         if($this->pdo->exec($sql) === false){
             return false;
         }else{
@@ -253,6 +300,31 @@ class DatabaseModel {
         $sql = "SELECT idhodnoceni FROM ".TABLE_HODNOCENI." WHERE iduzivatele='$iduzivatele' and idclanky='$idclanky'";
 
         return !empty($this->pdo->query($sql)->fetchAll()[0]['idhodnoceni']);
+    }
+
+    public function getUzivateleByPravo(int $idprava){
+        $sql = "SELECT ".TABLE_UZIVATELE.".iduzivatele,
+                       ".TABLE_UZIVATELE.".jmeno
+                FROM ".TABLE_UZIVPRAVA."
+                    left join ".TABLE_UZIVATELE."
+                        on ".TABLE_UZIVPRAVA.".iduzivatele = ".TABLE_UZIVATELE.".iduzivatele
+                WHERE ".TABLE_UZIVPRAVA.".idprava = '$idprava'";
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function poslatRecenzetum(int $idclanky, array $recenzenti, int $iduzivatele_predal){
+        $sql = "";
+        foreach($recenzenti as $iduzivatele){
+            $sql .= "INSERT INTO ".TABLE_HODNOCENI." (idclanky, iduzivatele, iduzivatele_predal) VALUES ('$idclanky', '$iduzivatele', '$iduzivatele_predal');";
+        }
+        //echo $sql;
+
+        if($this->pdo->exec($sql) === false){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }
